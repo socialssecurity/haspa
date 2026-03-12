@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة التقاعد الاجتماعي العراقي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">
+  <h1>🏛️ حاسبة التقاعد الاجتماعي العراقي</h1>
+  <div class="header-sub">استناداً إلى قانون الضمان الاجتماعي العراقي</div>
+</div>
+
+<div class="container">
+
+  <div class="form-card">
+    <div class="form-section-title">بيانات المنتسب</div>
+    <form id="pensionForm" novalidate>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label><span class="field-icon">👤</span> اسم المنتسب</label>
+          <input type="text" id="memberName" placeholder="أدخل اسم المنتسب" value="المنتسب" required>
+        </div>
+
+        <div class="form-group">
+          <label><span class="field-icon">⚧</span> الجنس</label>
+          <div class="gender-row">
+            <label class="radio-card">
+              <input type="radio" name="gender" value="male" checked>
+              <span class="radio-icon">👨</span> رجل
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="gender" value="female">
+              <span class="radio-icon">👩</span> امرأة
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><span class="field-icon">🎂</span> تاريخ الميلاد</label>
+          <div class="date-row">
+            <div class="date-item">
+              <span class="date-label">السنة</span>
+              <input type="number" id="birthYear" min="1900" max="2100" value="2000" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">الشهر</span>
+              <input type="number" id="birthMonth" min="1" max="12" value="1" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">اليوم</span>
+              <input type="number" id="birthDay" min="1" max="31" value="1" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><span class="field-icon">📅</span> تاريخ الانتساب إلى الضمان</label>
+          <div class="date-row">
+            <div class="date-item">
+              <span class="date-label">السنة</span>
+              <input type="number" id="joinYear" min="1900" max="2100" value="2015" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">الشهر</span>
+              <input type="number" id="joinMonth" min="1" max="12" value="1" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">اليوم</span>
+              <input type="number" id="joinDay" min="1" max="31" value="1" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group form-group-full">
+          <div class="extra-options-box">
+            <div class="extra-options-title">⚙️ خيارات إضافية</div>
+            <div class="extra-options-grid">
+
+              <div class="extra-option-item">
+                <label class="toggle-card">
+                  <input type="checkbox" id="hasPrevWork">
+                  <span class="extra-option-label">📋 خدمة سابقة</span>
+                </label>
+                <div class="extra-option-fields" id="prevWorkFields" style="display:none;">
+                  <div class="date-item" style="margin-top:8px;">
+                    <span class="date-label">عدد السنوات</span>
+                    <input type="number" id="prevWorkYears" min="1" max="20" value="1">
+                  </div>
+                </div>
+              </div>
+
+              <div class="extra-option-item">
+                <label class="toggle-card">
+                  <input type="checkbox" id="hasPrevService">
+                  <span class="extra-option-label">🗂️ فئة قديمة</span>
+                </label>
+                <div class="extra-option-fields" id="prevServiceFields" style="display:none;">
+                  <div class="date-item" style="margin-top:8px;">
+                    <span class="date-label">اختر الفئة</span>
+                    <select id="prevCategory">
+                    <option value="1">فئة 1</option>
+                    <option value="2">فئة 2</option>
+                    <option value="3">فئة 3</option>
+                    <option value="4">فئة 4</option>
+                    <option value="5">فئة 5</option>
+                    <option value="6">فئة 6</option>
+                    <option value="7">فئة 7</option>
+                    <option value="8">فئة 8</option>
+                    <option value="9">فئة 9</option>
+                    <option value="10">فئة 10</option>
+                    <option value="11">فئة 11</option>
+                    <option value="12">فئة 12</option>
+                    <option value="13">فئة 13</option>
+                    <option value="14">فئة 14</option>
+                    <option value="15">فئة 15</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <button type="submit" class="calc-btn" id="calculateBtn">
+        <span class="btn-icon">📊</span>
+        احسب الجدول التقاعدي
+      </button>
+    </form>
+  </div>
+
+  <div id="result" class="result-box" aria-live="polite">
+    <p class="placeholder">أدخل البيانات واضغط على الزر لعرض الجدول التقاعدي المناسب</p>
+  </div>
+
+</div>
+
+<script>
+document.getElementById('hasPrevService').addEventListener('change', function() {
+  document.getElementById('prevServiceFields').style.display = this.checked ? 'block' : 'none';
+});
+document.getElementById('hasPrevWork').addEventListener('change', function() {
+  document.getElementById('prevWorkFields').style.display = this.checked ? 'block' : 'none';
+});
+</script>
+<script src="script.js"></script>
+</body>
+</html>
