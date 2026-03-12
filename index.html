@@ -226,10 +226,14 @@ document.getElementById('hasPrevWork').addEventListener('change', function() {
 <!-- نظام حماية Fingerprint -->
 <script>
 const ALLOWED_FINGERPRINTS = [
-  "c8010084f6dddee224aeeadcb5818f5d",  // الجهاز الأول
-  "3dd2ee1a59313c05acd9818fa7470bb7",  // الجهاز الثاني
-  "96159b5bdf00721e1e6f779d0651598a",  // الجهاز الثالث
+  "c8010084f6dddee224aeeadcb5818f5d",  // اللابتوب
+  "3dd2ee1a59313c05acd9818fa7470bb7",  //الهاتف الثانوي
+  "96159b5bdf00721e1e6f779d0651598a",  // الهاتف الرئيسي
+  
+   "c760fec464112a89ab48b4253b691b27",  // الهاتف تجربة
+
 ];
+
 
 (function() {
   const fpScript = document.createElement('script');
