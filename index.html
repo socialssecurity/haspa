@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة التقاعد الاجتماعي العراقي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ── شاشة التحميل ── */
+  #fp-loading {
+    position: fixed; inset: 0;
+    background: #0f0f0f;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.2rem; z-index: 9999;
+  }
+  #fp-loading p { color: #888; font-family: 'Cairo', sans-serif; font-size: 1rem; }
+  .fp-spinner {
+    width: 44px; height: 44px;
+    border: 3px solid #222;
+    border-top-color: #c8972a;
+    border-radius: 50%;
+    animation: fp-spin 0.75s linear infinite;
+  }
+  @keyframes fp-spin { to { transform: rotate(360deg); } }
+
+  /* ── شاشة الرفض ── */
+  #fp-denied {
+    position: fixed; inset: 0;
+    background: #0f0f0f;
+    display: none; align-items: center; justify-content: center;
+    z-index: 9999;
+  }
+  .fp-box {
+    text-align: center;
+    background: #110808; border: 1px solid #3a0f0f;
+    padding: 3rem 3.5rem; border-radius: 16px;
+    max-width: 420px; width: 90%;
+    animation: fp-pop 0.4s ease;
+  }
+  .fp-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .fp-box h1 { font-size: 1.8rem; color: #ff4444; font-family: 'Cairo', sans-serif; margin-bottom: 0.6rem; }
+  .fp-box p  { color: #777; font-size: 0.95rem; margin-bottom: 1.5rem; font-family: 'Cairo', sans-serif; }
+  .fp-id {
+    display: inline-block;
+    background: #1e0808; border: 1px solid #3a1111; color: #ff6666;
+    font-family: monospace; font-size: 0.75rem;
+    padding: 0.4rem 1rem; border-radius: 999px;
+    word-break: break-all;
+  }
+  @keyframes fp-pop {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* المحتوى مخفي حتى يتم التحقق */
+  #main-body { display: none; }
+</style>
+</head>
+<body>
+
+<!-- شاشة التحميل -->
+<div id="fp-loading">
+  <div class="fp-spinner"></div>
+  <p>جارٍ التحقق من الهوية…</p>
+</div>
+
+<!-- شاشة الرفض -->
+<div id="fp-denied">
+  <div class="fp-box">
+    <div class="fp-icon">⛔</div>
+    <h1>Access Denied</h1>
+    <p>غير مصرّح لهذا الجهاز بالوصول</p>
+    <div class="fp-id" id="fp-visitor-id"></div>
+  </div>
+</div>
+
+<!-- المحتوى الحقيقي -->
+<div id="main-body">
+
+<div class="header">
+  <h1>🏛️ حاسبة التقاعد الاجتماعي العراقي</h1>
+  <div class="header-sub">استناداً إلى قانون الضمان الاجتماعي العراقي</div>
+</div>
+
+<div class="container">
+
+  <div class="form-card">
+    <div class="form-section-title">بيانات المنتسب</div>
+    <form id="pensionForm" novalidate>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label><span class="field-icon">👤</span> اسم المنتسب</label>
+          <input type="text" id="memberName" placeholder="أدخل اسم المنتسب" value="المنتسب" required>
+        </div>
+
+        <div class="form-group">
+          <label><span class="field-icon">⚧</span> الجنس</label>
+          <div class="gender-row">
+            <label class="radio-card">
+              <input type="radio" name="gender" value="male" checked>
+              <span class="radio-icon">👨</span> رجل
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="gender" value="female">
+              <span class="radio-icon">👩</span> امرأة
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><span class="field-icon">🎂</span> تاريخ الميلاد</label>
+          <div class="date-row">
+            <div class="date-item">
+              <span class="date-label">السنة</span>
+              <input type="number" id="birthYear" min="1900" max="2100" value="2000" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">الشهر</span>
+              <input type="number" id="birthMonth" min="1" max="12" value="1" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">اليوم</span>
+              <input type="number" id="birthDay" min="1" max="31" value="1" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><span class="field-icon">📅</span> تاريخ الانتساب إلى الضمان</label>
+          <div class="date-row">
+            <div class="date-item">
+              <span class="date-label">السنة</span>
+              <input type="number" id="joinYear" min="1900" max="2100" value="2015" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">الشهر</span>
+              <input type="number" id="joinMonth" min="1" max="12" value="1" required>
+            </div>
+            <div class="date-item">
+              <span class="date-label">اليوم</span>
+              <input type="number" id="joinDay" min="1" max="31" value="1" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group form-group-full">
+          <div class="extra-options-box">
+            <div class="extra-options-title">⚙️ خيارات إضافية</div>
+            <div class="extra-options-grid">
+
+              <div class="extra-option-item">
+                <label class="toggle-card">
+                  <input type="checkbox" id="hasPrevWork">
+                  <span class="extra-option-label">📋 خدمة سابقة</span>
+                </label>
+                <div class="extra-option-fields" id="prevWorkFields" style="display:none;">
+                  <div class="date-row" style="margin-top:8px;">
+                    <div class="date-item">
+                      <span class="date-label">السنوات</span>
+                      <input type="number" id="prevWorkYears" min="0" max="20" value="0">
+                    </div>
+                    <div class="date-item">
+                      <span class="date-label">الأشهر</span>
+                      <input type="number" id="prevWorkMonths" min="0" max="11" value="0">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="extra-option-item">
+                <label class="toggle-card">
+                  <input type="checkbox" id="hasPrevService">
+                  <span class="extra-option-label">🗂️ فئة قديمة</span>
+                </label>
+                <div class="extra-option-fields" id="prevServiceFields" style="display:none;">
+                  <div class="date-item" style="margin-top:8px;">
+                    <span class="date-label">اختر الفئة</span>
+                    <select id="prevCategory">
+                    <option value="1">فئة 1</option>
+                    <option value="2">فئة 2</option>
+                    <option value="3">فئة 3</option>
+                    <option value="4">فئة 4</option>
+                    <option value="5">فئة 5</option>
+                    <option value="6">فئة 6</option>
+                    <option value="7">فئة 7</option>
+                    <option value="8">فئة 8</option>
+                    <option value="9">فئة 9</option>
+                    <option value="10">فئة 10</option>
+                    <option value="11">فئة 11</option>
+                    <option value="12">فئة 12</option>
+                    <option value="13">فئة 13</option>
+                    <option value="14">فئة 14</option>
+                    <option value="15">فئة 15</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <button type="submit" class="calc-btn" id="calculateBtn">
+        <span class="btn-icon">📊</span>
+        احسب الجدول التقاعدي
+      </button>
+    </form>
+  </div>
+
+  <div id="result" class="result-box" aria-live="polite">
+    <p class="placeholder">أدخل البيانات واضغط على الزر لعرض الجدول التقاعدي المناسب</p>
+  </div>
+
+</div>
+
+</div><!-- end main-body -->
+
+<script>
+document.getElementById('hasPrevService').addEventListener('change', function() {
+  document.getElementById('prevServiceFields').style.display = this.checked ? 'block' : 'none';
+});
+document.getElementById('hasPrevWork').addEventListener('change', function() {
+  document.getElementById('prevWorkFields').style.display = this.checked ? 'block' : 'none';
+});
+</script>
+<script src="script.js"></script>
+
+<!-- نظام حماية Fingerprint -->
+<script>
+const ALLOWED_FINGERPRINTS = [
+  "c8010084f6dddee224aeeadcb5818f5d",  // اللابتوب
+  "3dd2ee1a59313c05acd9818fa7470bb7",  //الهاتف الثانوي
+  "96159b5bdf00721e1e6f779d0651598a",  // الهاتف الرئيسي
+  
+   "cc5fdcead1d65c7eaeee9cfb35e2dad4",  // مهدي صديق
+   "a901397245a2f092e0ddafe53128dbf4",  // مهدي نجم
+   "17631b287975fc4762259cb5c1f849c8",  // ابو سيف
+
+];
+
+
+(function() {
+  const fpScript = document.createElement('script');
+  fpScript.src = 'https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js';
+  fpScript.onload = async function() {
+    try {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      const visitorId = result.visitorId;
+
+      console.log("Fingerprint:", visitorId);
+
+      if (ALLOWED_FINGERPRINTS.includes(visitorId)) {
+        // مصرّح → أظهر المحتوى
+        document.getElementById('fp-loading').style.display = 'none';
+        document.getElementById('main-body').style.display = 'block';
+      } else {
+        // مرفوض
+        document.getElementById('fp-loading').style.display = 'none';
+        document.getElementById('fp-denied').style.display = 'flex';
+        document.getElementById('fp-visitor-id').textContent = 'ID: ' + visitorId;
+      }
+    } catch(e) {
+      document.getElementById('fp-loading').style.display = 'none';
+      document.getElementById('fp-denied').style.display = 'flex';
+      document.getElementById('fp-visitor-id').textContent = 'تعذّر التحقق';
+    }
+  };
+  document.head.appendChild(fpScript);
+})();
+</script>
+
+</body>
+</html>
